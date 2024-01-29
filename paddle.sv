@@ -20,9 +20,11 @@ parameter COLOR = 24'h EFE62E
         input signed [11:0] hpos, 
         input signed [11:0] vpos, 
         
-        
+        //Buttons
         input right, 
         input left, 
+
+        //Pixel output for paddle
         output [7:0] pixel [0:2] , 
         
         output active 
@@ -30,6 +32,7 @@ parameter COLOR = 24'h EFE62E
         
     );
     
+    //Paddle velocity
     localparam VEL = 16; 
     
     /* NOTE: Put means the paddle is not moving */
@@ -37,11 +40,19 @@ parameter COLOR = 24'h EFE62E
     localparam LEFT = 2'h01;
     localparam RIGHT = 2'h10;
     
-    
+    //Flip-flop for right and left buttons
     reg [0 : 2] right_ff  , left_ff ; 
     
+    //Assuming this is the bottom paddle
+    //And that the top left pixel represents (0,0) and bottom right is (1279, 719)
+    
+    //These values represent the left and right edge of the paddle
+    //These values should be changed depending on the dir register
     reg signed [ 11 : 0 ] lhpos; 
     reg signed [ 11 : 0 ] rhpos; 
+
+    //These values represent the top and bottom edge of the paddle
+    //These values should be constant as the paddle should never move up or down
     reg signed [ 11 : 0 ] tvpos; 
     reg signed [ 11 : 0 ] bvpos; 
     
@@ -95,15 +106,35 @@ begin
 
     if (rst) begin 
         /* Insert values to reset here */
+        //Reset paddle position to bottom left
+        lhpos <= 0;
+        rhpos <= PADDLE_W - 1;
+        tvpos <= VRES - 1 - (PADDLE_H - 1);
+        bvpos <= VRES - 1;
+        
     end else begin 
         if (fsync) begin
         /* The below code should only consider directions LEFT and RIGHT. Base this code off the code in Object.sv */
          /* The first paddle should be located at the top of the screen */
             if (dir == RIGHT) begin 
-               // ....
-           end 
-           
-           // ....
+                //Before moving paddle right, check to make sure the paddles new location is within the screen
+                if(( rhpos + VEL) <= HRES  - 1)begin
+                    rhpos <= rhpos + VEL;
+                    lhpos <= lhpos + VEL;
+                end
+            end 
+            else if ( dir == LEFT) begin
+                //Before moving paddle left, check to make sure the paddles new location is within the screen
+                if(( lhpos - VEL) >= 0)begin
+                    rhpos <= rhpos - VEL;
+                    lhpos <= lhpos - VEL;
+                end
+            end 
+            else if ( dir == PUT) begin
+                //Keep paddle in same spot
+                    rhpos <= rhpos;
+                    lhpos <= lhpos;                   
+            end
        end 
    end 
 end 

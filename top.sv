@@ -59,6 +59,10 @@ module top (
     
     wire active_paddle; 
     wire [7 : 0 ] pixel_paddle [0:2] ;
+
+    
+    wire active_paddle_two; 
+    wire [7 : 0 ] pixel_paddle_two [0:2] ;
     
     
     reg game_over_eval, evaluate ; 
@@ -185,8 +189,8 @@ paddle_two_inst
        .left        (left_two), 
        
        
-       .pixel       (pixel_paddle) , 
-       .active      (active_paddle)
+       .pixel       (pixel_paddle_two) , 
+       .active      (active_paddle_two)
         
         
     );

@@ -122,10 +122,10 @@ begin
                     rhpos <= rhpos + VEL;
                     lhpos <= lhpos + VEL;
                 end
+                else begin
                 //Move the paddle to the right bound
                     rhpos <= HRES - 1;
                     lhpos <= (HRES - 1) - (PADDLE_W - 1);
-                else begin
                 end
             end 
             else if ( dir == LEFT) begin

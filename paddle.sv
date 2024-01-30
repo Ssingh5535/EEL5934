@@ -109,7 +109,7 @@ begin
         //Reset paddle position to bottom left
         lhpos <= 0;
         rhpos <= PADDLE_W - 1;
-        tvpos <= VRES - 1 - (PADDLE_H - 1);
+        tvpos <= (VRES - 1) - (PADDLE_H - 1);
         bvpos <= VRES - 1;
         
     end else begin 
@@ -122,12 +122,22 @@ begin
                     rhpos <= rhpos + VEL;
                     lhpos <= lhpos + VEL;
                 end
+                //Move the paddle to the right bound
+                    rhpos <= HRES - 1;
+                    lhpos <= (HRES - 1) - (PADDLE_W - 1);
+                else begin
+                end
             end 
             else if ( dir == LEFT) begin
                 //Before moving paddle left, check to make sure the paddles new location is within the screen
                 if(( lhpos - VEL) >= 0)begin
                     rhpos <= rhpos - VEL;
                     lhpos <= lhpos - VEL;
+                end
+                else begin
+                    //Move the paddle to the left bound
+                    rhpos <= PADDLE_W - 1;
+                    lhpos <= 0;
                 end
             end 
             else if ( dir == PUT) begin

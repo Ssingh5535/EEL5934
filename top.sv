@@ -1,7 +1,9 @@
 module top ( 
     input clk125, 
     input right,
-    input left, 
+    input left,
+    input right_two,
+    input left_two, 
     
     output tmds_tx_clk_p, 
     output tmds_tx_clk_n,
@@ -151,6 +153,36 @@ paddle_inst
        
        .right       (right),
        .left        (left), 
+       
+       
+       .pixel       (pixel_paddle) , 
+       .active      (active_paddle)
+        
+        
+    );
+
+            paddle_two #( 
+
+ .HRES      (HRES),
+ .VRES      (VRES),
+ .PADDLE_W  (PADDLE_W),
+ .PADDLE_H  (PADDLE_H),
+ .COLOR     (COLOR_PAD)
+  
+)
+
+paddle_two_inst
+
+
+    (
+       .pixel_clk   (pixel_clk),
+       .rst         (rst || game_over),
+       .fsync       (fsync),  
+       .hpos        (hpos), 
+       .vpos        (vpos), 
+       
+       .right       (right_two),
+       .left        (left_two), 
        
        
        .pixel       (pixel_paddle) , 

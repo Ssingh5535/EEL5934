@@ -79,7 +79,35 @@ module top (
     /* Add Scoreboard Instantiation Here */
     
     /* Add Top Paddle Instantiation Here */
-    
+                paddle_two #( 
+
+ .HRES      (HRES),
+ .VRES      (VRES),
+ .PADDLE_W  (PADDLE_W),
+ .PADDLE_H  (PADDLE_H),
+ .COLOR     (COLOR_PAD)
+  
+)
+
+paddle_two_inst
+
+
+    (
+       .pixel_clk   (pixel_clk),
+       .rst         (rst || game_over),
+       .fsync       (fsync),  
+       .hpos        (hpos), 
+       .vpos        (vpos), 
+       
+       .right       (right_two),
+       .left        (left_two), 
+       
+       
+       .pixel       (pixel_paddle_two) , 
+       .active      (active_paddle_two)
+        
+        
+    );
     
     // HDMIT Transmit + clock video timing 
     hdmi_transmit hdmi_transmit_inst ( 
@@ -165,37 +193,7 @@ paddle_inst
         
     );
 
-            paddle_two #( 
-
- .HRES      (HRES),
- .VRES      (VRES),
- .PADDLE_W  (PADDLE_W),
- .PADDLE_H  (PADDLE_H),
- .COLOR     (COLOR_PAD)
-  
-)
-
-paddle_two_inst
-
-
-    (
-       .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
-       .fsync       (fsync),  
-       .hpos        (hpos), 
-       .vpos        (vpos), 
-       
-       .right       (right_two),
-       .left        (left_two), 
-       
-       
-       .pixel       (pixel_paddle_two) , 
-       .active      (active_paddle_two)
-        
-        
-    );
-     
-      
+    
   
   gameover_bitmap gameover_bitmap_inst ( 
   

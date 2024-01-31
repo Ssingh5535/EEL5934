@@ -22,10 +22,14 @@ set_property -dict {PACKAGE_PIN J19 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data
 set_property -dict {PACKAGE_PIN J18 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data_p[2]}]
 set_property -dict {PACKAGE_PIN H18 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data_n[2]}]
 
-# Push button 0 -> Right (Signal name BTN0)
-set_property -dict { PACKAGE_PIN D19 IOSTANDARD LVCMOS33 } [get_ports BTN0] 
-# Push button 3 -> Left  (Signal Name BTN3)
-set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports BTN3]
+# Button 0
+set_property -dict { PACKAGE_PIN D19 IOSTANDARD LVCMOS33 } [get_ports right]
+# Button 1
+set_property -dict { PACKAGE_PIN D20 IOSTANDARD LVCMOS33 } [get_ports left]
+# Button 2
+set_property -dict { PACKAGE_PIN L20 IOSTANDARD LVCMOS33 } [get_ports right_two]
+# Button 3
+set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports left_two]
 
 
 

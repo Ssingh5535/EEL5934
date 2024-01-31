@@ -31,6 +31,8 @@ set_property -dict { PACKAGE_PIN L20 IOSTANDARD LVCMOS33 } [get_ports right_two]
 # Button 3
 set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports left_two]
 
+set_property -dict { PACKAGE_PIN M20 IOSTANDARD LVCMOS33 } [get_ports dip_rst]
+
 
 
 ## LEDs

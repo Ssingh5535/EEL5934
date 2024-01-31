@@ -2,7 +2,8 @@ module paddle #(
 
 parameter HRES = 1280,
 parameter VRES = 720,
-
+parameter VTOP,
+parameter VBOT,
 
 parameter PADDLE_W = 200,
 parameter PADDLE_H = 20,
@@ -109,8 +110,8 @@ begin
         //Reset paddle position to bottom left
         lhpos <= 0;
         rhpos <= PADDLE_W - 1;
-        tvpos <= (VRES - 1) - (PADDLE_H - 1);
-        bvpos <= VRES - 1;
+        tvpos <= VTOP;
+        bvpos <= VBOT;
         
     end else begin 
         if (fsync) begin

@@ -79,14 +79,15 @@ module top (
     /* Add Scoreboard Instantiation Here */
     
     /* Add Top Paddle Instantiation Here */
-                paddle_two #( 
+                paddle #( 
 
  .HRES      (HRES),
  .VRES      (VRES),
  .PADDLE_W  (PADDLE_W),
  .PADDLE_H  (PADDLE_H),
- .COLOR     (COLOR_PAD)
-  
+ .COLOR     (COLOR_PAD),
+ .VTOP      (0),
+ .VBOT      (PADDLE_H - 1) 
 )
 
 paddle_two_inst
@@ -169,7 +170,9 @@ object_inst
  .VRES      (VRES),
  .PADDLE_W  (PADDLE_W),
  .PADDLE_H  (PADDLE_H),
- .COLOR     (COLOR_PAD)
+ .COLOR     (COLOR_PAD),
+ .VTOP      ((VRES - 1) - (PADDLE_H - 1)),
+ .VBOT      (VRES - 1) 
   
 )
 

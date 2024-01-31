@@ -4,6 +4,8 @@ module top (
     input left,
     input right_two,
     input left_two, 
+
+    input dip_rst,
     
     output tmds_tx_clk_p, 
     output tmds_tx_clk_n,
@@ -95,7 +97,7 @@ paddle_two_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+        .rst         (rst || game_over || dip_rst),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -120,7 +122,7 @@ paddle_two_inst
         // Shared video interface to the rest of the system 
         
         .pixel_clk      (pixel_clk), 
-        .rst            (rst),
+        .rst            (rst || dip_rst),
         .active         (active),
         .fsync          (fsync),
         .hpos           (hpos),
@@ -152,7 +154,7 @@ object_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+       .rst         (rst || game_over || dip_rst),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -181,7 +183,7 @@ paddle_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+       .rst         (rst || game_over || dip_rst),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -237,7 +239,7 @@ paddle_inst
         
         
         
-        if(rst) begin 
+         if(rst || dip_rst) begin 
         
             game_over               <= 1'b0; 
             game_over_eval          <= 1'b0; 

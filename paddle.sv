@@ -100,55 +100,37 @@ parameter COLOR = 24'h EFE62E
 end                     
 
 
-always @ (posedge pixel_clk) 
-begin 
-
-    /* Insert your code for calculating the position of the paddle */
-
-    if (rst) begin 
-        /* Insert values to reset here */
-        //Reset paddle position to bottom left
+always @(posedge pixel_clk)
+begin
+    if (rst) begin
         lhpos <= 0;
         rhpos <= PADDLE_W - 1;
         tvpos <= VTOP;
         bvpos <= VBOT;
-        
-    end else begin 
+    end else begin
         if (fsync) begin
-        /* The below code should only consider directions LEFT and RIGHT. Base this code off the code in Object.sv */
-         /* The first paddle should be located at the top of the screen */
-            if (dir == RIGHT) begin 
-                //Before moving paddle right, check to make sure the paddles new location is within the screen
-                if(( rhpos + VEL) <= HRES  - 1)begin
-                    rhpos <= rhpos + VEL;
+            if (dir == RIGHT) begin
+                //Move right x pixel
+                if ((rhpos + VEL) <= HRES-1) begin
                     lhpos <= lhpos + VEL;
-                end
-                else begin
-                //Move the paddle to the right bound
+                    rhpos <= rhpos + VEL;
+                end else begin
+                //Hit right wall
+                    lhpos <= HRES - PADDLE_W;
                     rhpos <= HRES - 1;
-                    lhpos <= (HRES - 1) - (PADDLE_W - 1);
                 end
-            end 
-            else if ( dir == LEFT) begin
-                //Before moving paddle left, check to make sure the paddles new location is within the screen
-                if(( lhpos - VEL) >= 0)begin
-                    rhpos <= rhpos - VEL;
-                    lhpos <= lhpos - VEL;
-                end
-                else begin
-                    //Move the paddle to the left bound
-                    rhpos <= PADDLE_W - 1;
-                    lhpos <= 0;
-                end
-            end 
-            else if ( dir == PUT) begin
-                //Keep paddle in same spot
-                    rhpos <= rhpos;
-                    lhpos <= lhpos;                   
+              end else if (dir == LEFT) begin
+                  if ((lhpos - VEL) >= 0) begin
+                      lhpos <= lhpos - VEL;
+                      rhpos <= rhpos - VEL;
+                  end else begin
+                      lhpos <= 0;
+                      rhpos <= PADDLE_W - 1;
+                  end
+               end
             end
-       end 
-   end 
-end 
+        end
+     end
 
     /* Active calculates whether the current pixel being updated by the HDMI controller is within the bounds of the ball's */
     /* Simple Example: If the ball is located at position 0,0 and vpos and rpos = 0, active will be high, placing a green pixel */

@@ -2,20 +2,16 @@ module paddle #(
 
 parameter HRES = 1280,
 parameter VRES = 720,
-parameter VTOP,
-parameter VBOT,
+//parameter VTOP,
+//parameter VBOT,
 
 parameter PADDLE_W = 200,
 parameter PADDLE_H = 20,
 parameter COLOR = 24'h EFE62E
-)
-
-
-
-
-    (
+)   (
         input pixel_clk,
         input rst,
+        
         input fsync, 
         
         input signed [11:0] hpos, 
@@ -58,12 +54,13 @@ parameter COLOR = 24'h EFE62E
     reg signed [ 11 : 0 ] bvpos; 
     
     
-    reg [ 1 : 0 ] dir; 
+    reg [ 1 : 0 ] dir ; 
     
     reg register_right, register_left ; 
     
     
-    always @(posedge pixel_clk) 
+    //always @(posedge pixel_clk) 
+    always @(pixel_clk) 
     
     begin 
         if(rst) begin 
@@ -85,10 +82,10 @@ parameter COLOR = 24'h EFE62E
             end else begin 
                 if (( ~register_right ) && (~register_left)) begin 
                 
-                    if (right_ff [2] ) begin 
-                        register_right <= 1'b1; 
-                    end else if (left_ff [ 2 ] ) begin 
-                        register_left <= 1'b1; 
+                   if (left_ff[2]) begin
+                register_left <= 1'b1;
+            end else if (right_ff[2]) begin
+                register_right <= 1'b1;
                     end 
                end 
            end 
@@ -105,28 +102,44 @@ begin
     if (rst) begin
         lhpos <= 0;
         rhpos <= PADDLE_W - 1;
-        tvpos <= VTOP;
-        bvpos <= VBOT;
+        tvpos <= VRES -PADDLE_H;
+        bvpos <= VRES -1;
+        //tvpos <= VTOP;
+        //bvpos <= VBOT;
     end else begin
         if (fsync) begin
-            if (dir == RIGHT) begin
-                //Move right x pixel
-                if ((rhpos + VEL) <= HRES-1) begin
-                    lhpos <= lhpos + VEL;
+          /* The first paddle should be located at the top of the screen */
+            if (dir == RIGHT && right == 1'b1) begin 
+                //Before moving paddle right, check to make sure the paddles new location is within the screen
+                if(( rhpos + VEL) <= HRES  - 1)begin
+                    //rhpos <= rhpos;
+                    //lhpos <= lhpos;
                     rhpos <= rhpos + VEL;
-                end else begin
-                //Hit right wall
-                    lhpos <= HRES - PADDLE_W;
-                    rhpos <= HRES - 1;
+                    lhpos <= lhpos + VEL;
                 end
-              end else if (dir == LEFT) begin
-                  if ((lhpos - VEL) >= 0) begin
-                      lhpos <= lhpos - VEL;
-                      rhpos <= rhpos - VEL;
-                  end else begin
-                      lhpos <= 0;
-                      rhpos <= PADDLE_W - 1;
-                  end
+                else begin
+                //Move the paddle to the right bound
+                    rhpos <= HRES - 1;
+                    lhpos <= HRES -PADDLE_W;
+                end
+            end 
+            else if ( left == 1'b1) begin
+                //Before moving paddle left, check to make sure the paddles new location is within the screen
+                if(( lhpos - VEL) >= 0)begin
+                    rhpos <= rhpos - VEL;
+                    lhpos <= lhpos - VEL;
+                end
+                else begin
+                    //Move the paddle to the left bound
+                    rhpos <= PADDLE_W - 1;
+                    lhpos <= 0;
+                end
+                
+            end 
+            else if ( dir == PUT) begin
+                //Keep paddle in same spot
+                    rhpos <= rhpos;
+                    lhpos <= lhpos;                   
                end
             end
         end

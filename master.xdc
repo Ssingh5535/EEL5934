@@ -22,21 +22,24 @@ set_property -dict {PACKAGE_PIN J19 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data
 set_property -dict {PACKAGE_PIN J18 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data_p[2]}]
 set_property -dict {PACKAGE_PIN H18 IOSTANDARD TMDS_33} [get_ports {tmds_tx_data_n[2]}]
 
+# Push button 0 -> Right (Signal name BTN0)
+#set_property -dict { PACKAGE_PIN D19 IOSTANDARD LVCMOS33 } [get_ports BTN0] 
+# Push button 3 -> Left  (Signal Name BTN3)
+#set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports BTN3]
+
 # Button 0
 set_property -dict { PACKAGE_PIN D19 IOSTANDARD LVCMOS33 } [get_ports right]
 # Button 1
 set_property -dict { PACKAGE_PIN D20 IOSTANDARD LVCMOS33 } [get_ports left]
 # Button 2
-set_property -dict { PACKAGE_PIN L20 IOSTANDARD LVCMOS33 } [get_ports right_two]
+#set_property -dict { PACKAGE_PIN L20 IOSTANDARD LVCMOS33 } [get_ports right_two]
 # Button 3
-set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports left_two]
-
-set_property -dict { PACKAGE_PIN M20 IOSTANDARD LVCMOS33 } [get_ports dip_rst]
-
-
+#set_property -dict { PACKAGE_PIN L19 IOSTANDARD LVCMOS33 } [get_ports left_two]
 
 ## LEDs
-set_property -dict {PACKAGE_PIN R14 IOSTANDARD LVCMOS33} [get_ports {led_kawser}]
+#set_property -dict {PACKAGE_PIN R14 IOSTANDARD LVCMOS33} [get_ports {led_kawser}]
 #set_property -dict {PACKAGE_PIN P14 IOSTANDARD LVCMOS33} [get_ports {leds_4bits_tri_o[1]}]
 #set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS33} [get_ports {leds_4bits_tri_o[2]}]
 #set_property -dict {PACKAGE_PIN M14 IOSTANDARD LVCMOS33} [get_ports {leds_4bits_tri_o[3]}]
+set_property -dict {PACKAGE_PIN P14 IOSTANDARD LVCMOS33} [get_ports {led_right}]
+set_property -dict {PACKAGE_PIN N16 IOSTANDARD LVCMOS33} [get_ports {led_left}]

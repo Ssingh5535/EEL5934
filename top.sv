@@ -1,18 +1,17 @@
 module top ( 
     input clk125, 
     input right,
-    input left,
-    input right_two,
-    input left_two, 
-
-    input dip_rst,
+    input left, 
     
     output tmds_tx_clk_p, 
     output tmds_tx_clk_n,
     
     output [2:0] tmds_tx_data_p, 
     output [2:0] tmds_tx_data_n,
-    output led_kawser 
+    //output led_kawser, 
+    
+    output led_right,
+    output led_left
     
     ); 
     
@@ -61,10 +60,6 @@ module top (
     
     wire active_paddle; 
     wire [7 : 0 ] pixel_paddle [0:2] ;
-
-    
-    wire active_paddle_two; 
-    wire [7 : 0 ] pixel_paddle_two [0:2] ;
     
     
     reg game_over_eval, evaluate ; 
@@ -81,36 +76,7 @@ module top (
     /* Add Scoreboard Instantiation Here */
     
     /* Add Top Paddle Instantiation Here */
-                paddle #( 
-
- .HRES      (HRES),
- .VRES      (VRES),
- .PADDLE_W  (PADDLE_W),
- .PADDLE_H  (PADDLE_H),
- .COLOR     (COLOR_PAD),
- .VTOP      (0),
- .VBOT      (PADDLE_H - 1) 
-)
-
-paddle_two_inst
-
-
-    (
-       .pixel_clk   (pixel_clk),
-        .rst         (rst || game_over || dip_rst),
-       .fsync       (fsync),  
-       .hpos        (hpos), 
-       .vpos        (vpos), 
-       
-       .right       (right_two),
-       .left        (left_two), 
-       
-       
-       .pixel       (pixel_paddle_two) , 
-       .active      (active_paddle_two)
-        
-        
-    );
+    
     
     // HDMIT Transmit + clock video timing 
     hdmi_transmit hdmi_transmit_inst ( 
@@ -122,7 +88,7 @@ paddle_two_inst
         // Shared video interface to the rest of the system 
         
         .pixel_clk      (pixel_clk), 
-        .rst            (rst || dip_rst),
+        .rst            (rst),
         .active         (active),
         .fsync          (fsync),
         .hpos           (hpos),
@@ -154,7 +120,7 @@ object_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over || dip_rst),
+       .rst         (rst || game_over),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -172,9 +138,7 @@ object_inst
  .VRES      (VRES),
  .PADDLE_W  (PADDLE_W),
  .PADDLE_H  (PADDLE_H),
- .COLOR     (COLOR_PAD),
- .VTOP      ((VRES - 1) - (PADDLE_H - 1)),
- .VBOT      (VRES - 1) 
+ .COLOR     (COLOR_PAD)
   
 )
 
@@ -183,7 +147,7 @@ paddle_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over || dip_rst),
+       .rst         (rst || game_over),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -197,8 +161,8 @@ paddle_inst
         
         
     );
-
-    
+     
+      
   
   gameover_bitmap gameover_bitmap_inst ( 
   
@@ -228,7 +192,9 @@ paddle_inst
     assign pixel [1] = game_over ? pixel_gameover [1] : pixel_obj [ 1 ] | pixel_paddle [ 1 ] ;
     assign pixel [0] = game_over ? pixel_gameover [0] : pixel_obj [ 0 ] | pixel_paddle [ 0 ] ;
        
-       assign led_kawser = 1; 
+       //assign led_kawser = 1; 
+       assign led_right = right;
+       assign led_left = left;
      
      // We need to detect gameover 
      
@@ -239,7 +205,7 @@ paddle_inst
         
         
         
-         if(rst || dip_rst) begin 
+        if(rst) begin 
         
             game_over               <= 1'b0; 
             game_over_eval          <= 1'b0; 

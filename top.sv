@@ -2,6 +2,8 @@ module top (
     input clk125, 
     input right,
     input left, 
+    input right_two,
+    input left_two, 
     
     output tmds_tx_clk_p, 
     output tmds_tx_clk_n,
@@ -60,6 +62,10 @@ module top (
     
     wire active_paddle; 
     wire [7 : 0 ] pixel_paddle [0:2] ;
+    
+    //active paddle two
+    wire active_paddle_two; 
+    wire [7 : 0 ] pixel_paddle_two [0:2] ;
     
     
     reg game_over_eval, evaluate ; 
@@ -161,6 +167,36 @@ paddle_inst
         
         
     );
+    
+    paddle_two #( 
+
+ .HRES      (HRES),
+ .VRES      (VRES),
+ .PADDLE_W  (PADDLE_W),
+ .PADDLE_H  (PADDLE_H),
+ .COLOR     (COLOR_PAD)
+  
+)
+
+paddle_two_inst
+
+
+    (
+       .pixel_clk   (pixel_clk),
+       .rst         (rst || game_over),
+       .fsync       (fsync),  
+       .hpos        (hpos), 
+       .vpos        (vpos), 
+       
+       .right_two       (right_two),
+       .left_two        (left_two), 
+       
+       
+       .pixel       (pixel_paddle_two) , 
+       .active      (active_paddle_two)
+        
+        
+    );
      
       
   
@@ -188,9 +224,14 @@ paddle_inst
     
     // Display RGB pixels 
     
-    assign pixel [2] = game_over ? pixel_gameover [2] : pixel_obj [ 2 ] | pixel_paddle [ 2 ] ;
-    assign pixel [1] = game_over ? pixel_gameover [1] : pixel_obj [ 1 ] | pixel_paddle [ 1 ] ;
-    assign pixel [0] = game_over ? pixel_gameover [0] : pixel_obj [ 0 ] | pixel_paddle [ 0 ] ;
+    //assign pixel [2] = game_over ? pixel_gameover [2] : pixel_obj [ 2 ] | pixel_paddle [ 2 ] ;
+    //assign pixel [1] = game_over ? pixel_gameover [1] : pixel_obj [ 1 ] | pixel_paddle [ 1 ] ;
+    //assign pixel [0] = game_over ? pixel_gameover [0] : pixel_obj [ 0 ] | pixel_paddle [ 0 ] ;
+    
+    assign pixel [2] = game_over ? pixel_gameover [2] : pixel_obj [ 2 ] | pixel_paddle [ 2 ] | pixel_paddle_two [ 2 ];
+    assign pixel [1] = game_over ? pixel_gameover [1] : pixel_obj [ 1 ] | pixel_paddle [ 1 ] | pixel_paddle_two [ 1 ];
+    assign pixel [0] = game_over ? pixel_gameover [0] : pixel_obj [ 0 ] | pixel_paddle [ 0 ] | pixel_paddle_two [ 0 ];
+
        
        //assign led_kawser = 1; 
        assign led_right = right;
@@ -232,7 +273,12 @@ paddle_inst
                          if (active_paddle) begin 
                                evaluate                <= 1'b0;
                          end
-                    
+                    end else if(vpos == PADDLE_H -1 && active_obj) begin
+                            active_passing          <= 1'b1; 
+                         if (active_paddle_two) begin 
+                               evaluate                <= 1'b0;
+                         end
+                        
                     end else if (active_passing) begin 
                         if(~active_obj) begin 
                               game_over_eval          <= 1'b1; 
@@ -261,5 +307,3 @@ end
 
 
 endmodule 
-
-    

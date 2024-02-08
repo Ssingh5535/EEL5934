@@ -66,9 +66,17 @@ module top (
     //active paddle two
     wire active_paddle_two; 
     wire [7 : 0 ] pixel_paddle_two [0:2] ;
+
+    //scoreboard signals
+    wire active_scoreboard; 
+    wire [7 : 0 ] pixel_scoreboard [0:2] ;
+    reg player_1_scored;
+    reg player_2_scored;
+    wire player_1_win;
+    wire player_2_win;
     
     
-    reg game_over_eval, evaluate ; 
+    reg evaluate ; 
     reg game_over; 
     reg [7 : 0 ] pause ; 
     
@@ -80,6 +88,34 @@ module top (
     wire [7:0] pixel_gameover [0:2] ; 
     
     /* Add Scoreboard Instantiation Here */
+
+         scoreboard #( 
+ .PADDLE_W  (PADDLE_W),
+ .PADDLE_H  (PADDLE_H),
+ .HRES      (HRES),
+ .VRES      (VRES),
+ .COLOR     (COLOR_GMO)
+)
+
+scoreboard_inst
+
+
+    (
+       .pixel_clk   (pixel_clk),
+       .rst         (rst),
+       .fsync       (fsync),  
+       .hpos        (hpos), 
+       .vpos        (vpos), 
+       .player_1_scored (player_1_scored),
+       .player_2_scored (player_2_scored),
+       .active      (active_scoreboard),
+       .pixel       (pixel_scoreboard) , 
+       .player_1_win (player_1_win),
+       .player_2_win (player_2_win)
+        
+        
+    );
+
     
     /* Add Top Paddle Instantiation Here */
     
@@ -126,7 +162,7 @@ object_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+       .rst         (rst || game_over || player_1_scored || player_2_scored),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -153,7 +189,7 @@ paddle_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+       .rst         (rst || game_over || player_1_scored || player_2_scored),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -183,7 +219,7 @@ paddle_two_inst
 
     (
        .pixel_clk   (pixel_clk),
-       .rst         (rst || game_over),
+       .rst         (rst || game_over || player_1_scored || player_2_scored),
        .fsync       (fsync),  
        .hpos        (hpos), 
        .vpos        (vpos), 
@@ -243,13 +279,13 @@ paddle_two_inst
      always @(posedge pixel_clk)
      
      begin 
-        
-        
+         //default scored to false
+         player_1_scored <= 1'b0;  
+         player_2_scored <= 1'b0;
         
         if(rst) begin 
         
             game_over               <= 1'b0; 
-            game_over_eval          <= 1'b0; 
             evaluate                <= 1'b0;
             pause                   <= 0;
             active_passing          <= 1'b0; 
@@ -267,7 +303,7 @@ paddle_two_inst
                 active_passing          <= 1'b0; 
             
             end else begin 
-                if(~game_over_eval) begin 
+                if( ~player_1_win && ~player_2_win) begin 
                     if(vpos == VRES - PADDLE_H && active_obj) begin 
                          active_passing          <= 1'b1; 
                          if (active_paddle) begin 
@@ -281,12 +317,16 @@ paddle_two_inst
                         
                     end else if (active_passing) begin 
                         if(~active_obj) begin 
-                              game_over_eval          <= 1'b1; 
+                            if(vpos == PADDLE_H -1) begin
+                                player_1_scored <= 1'b1;
+                            end
+                            if(vpos == VRES - PADDLE_H ) begin
+                                player_2_scored <= 1'b1;
+                            end
                         end
                     end
                 end else if (fsync) begin 
                     if(pause == RESTART_PAUSE) begin
-                        game_over_eval          <= 1'b0;
                         evaluate                <= 1'b0; 
                         game_over               <= 1'b0; 
                     end else begin 

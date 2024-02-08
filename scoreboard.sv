@@ -39,7 +39,7 @@ parameter COLOR = 24'h EFE62E
             //Reset players score
             player_1_score <= 4'b0000;
             player_2_score <= 4'b0000;
-        end else begin
+        end else if (fsync) begin
                 //Player 2 scored
                 if(player_2_scored)begin
                         player_2_score <= player_2_score + 4'b0001;

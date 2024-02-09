@@ -12,10 +12,8 @@ module score_board #(
     input player_2_scored,
     input signed [11:0] hpos,
     input signed [11:0] vpos,
-    output [7:0] pixel[0:2],
     output player_1_win,
-    output player_2_win,
-    output active
+    output player_2_win
 );
 
     // Internal registers to keep track of each player's score
